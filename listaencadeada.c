@@ -1,6 +1,9 @@
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stddef.h>
+
 
 struct elementolista // crio a struct base da lista
 {
@@ -44,15 +47,49 @@ void liberar (item*cabeca){
     }
     
 }
+
+item *find (item*cabeca,size_t pos){
+        item *cursor = cabeca;
+        size_t i = 0;
+        while (i<pos)
+        {
+            cursor= cursor->next;
+            i++;
+        }
+        return cursor;
+
+
+}
+
+item *achar (item *cabeca,int val){
+    item*atual= cabeca;
+    while (atual->next!=NULL && atual->next->val!=val)
+    {
+        atual= atual->next;
+    }
+    return atual;
+
+
+}
+
+
+
 int main () {
     item cabeca;
     cabeca.next=NULL;
 
     add(&cabeca, 30);
     add(&cabeca, 55);
+    add(&cabeca, 550);
     imprimir(&cabeca);
 
-    liberar (&cabeca);
+    item *node2=NULL;
+    node2 = find (&cabeca,1);
+    printf("list[%d]=%d\n" ,2,node2->next->val);
+
+
+
+    liberar(&cabeca);
 
     return 0;
 
