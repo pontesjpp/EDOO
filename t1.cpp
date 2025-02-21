@@ -47,8 +47,8 @@ public:
             Node *to_die = head;
             head = head->next;
             delete to_die;
-			this->sz=0;
         }
+		this->sz=0;
     }
 
     // Métodos da interface List
@@ -173,7 +173,7 @@ public:
 
     const T &peek() {
         if (list->size() == 0) {
-            return;
+            throw std::out_of_range("SQ is empty.");
         }
         return (*list)[0];
     } // retorna uma referencia para o elemento no topo/frente da pilha/fila
@@ -190,11 +190,11 @@ public:
         if (type == STACK) {
             return list->remove(0);
         } else if (type == QUEUE) {
-            return list->remove(list->size() - 1);
-        }
-		else{
-			break;
+            return list->remove(0);
+        } else {
+			throw std::out_of_range("Cannot pop from an empty SQ.");
 		}
+		
     } // desempilha/desenfileira
 
     void transform() {
