@@ -48,7 +48,7 @@ public:
             head = head->next;
             delete to_die;
         }
-		this->sz=0;
+        this->sz = 0;
     }
 
     // Métodos da interface List
@@ -95,8 +95,8 @@ public:
     // Os elementos devem ser removidos de other
     // mas a lista other nao deve ser destruida
     void merge(LinkedList<T> *other) {
-        if (other == nullptr || other->head == nullptr) {
-            return; // Se 'other' estiver vazia ou for nula, não há nada para mesclar
+        if (other == nullptr) {
+            return; // Se 'other' for nula, não há nada para mesclar
         }
 
         if (head == nullptr) {
@@ -119,8 +119,11 @@ public:
     // Os restantes elementos sao colocados numa nova lista
     // retornada pelo metodo.
     LinkedList<T> *split() {
+        if (this->sz == 0) {
+            return nullptr;
+        }
         if (this->sz < 2) {
-            return new LinkedList<T>(); // Retorna uma lista vazia se não puder dividir
+            return new LinkedList<T>();
         }
 
         int mid = this->sz / 2;
@@ -138,7 +141,7 @@ public:
 
 private:
     Node *locate(int pos) {
-        if (pos < 0 || pos >= this->sz) {
+        if (pos < 0 || pos >= this->sz || head == nullptr) {
             return nullptr;
         }
         Node *cur = head;
@@ -172,13 +175,16 @@ public:
     int size() { return list->size(); } // retorna o numero de elementos na SQ
 
     const T &peek() {
-        if (list->size() == 0) {
+        if (list == nullptr || list->size() == 0) {
             throw std::out_of_range("SQ is empty.");
         }
         return (*list)[0];
     } // retorna uma referencia para o elemento no topo/frente da pilha/fila
 
     void push(T val) {
+        if (list == nullptr) {
+            return;
+        }
         if (type == STACK) {
             list->prepend(val);
         } else if (type == QUEUE) {
@@ -187,17 +193,16 @@ public:
     } // empilha/enfileira
 
     T pop() {
-        if (type == STACK) {
-            return list->remove(0);
-        } else if (type == QUEUE) {
-            return list->remove(0);
-        } else {
-			throw std::out_of_range("Cannot pop from an empty SQ.");
-		}
-		
+        if (list == nullptr || list->size() == 0) {
+            throw std::out_of_range("Cannot pop from an empty SQ.");
+        }
+        return list->remove(0);
     } // desempilha/desenfileira
 
     void transform() {
+        if (list == nullptr) {
+            return;
+        }
         if (type == STACK) {
             type = QUEUE;
         } else if (type == QUEUE) {
@@ -209,14 +214,20 @@ public:
     // os primeiros floor(n/2) elementos permanecem nesta SQ
     // e os demais sao retornados numa nova SQ
     SQ<T> *split() {
+        if (list == nullptr) {
+            return nullptr;
+        }
         LinkedList<T> *new_list = list->split();
+        if (new_list == nullptr) {
+            return nullptr;
+        }
         SQ<T> *new_sq = new SQ<T>(type);
         new_sq->list = new_list;
         return new_sq;
     }
 
     void merge(SQ<T> *other) {
-        if (other == nullptr || other->list == nullptr) {
+        if (other == nullptr || list == nullptr) {
             return;
         }
         list->merge(other->list);
