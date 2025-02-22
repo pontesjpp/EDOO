@@ -30,7 +30,7 @@ int main() {
                 for (int idx = 0; idx < i && current != nullptr; idx++) {
                     current = current->next;
                 }
-                if (current != nullptr) {
+                if (current != nullptr && current->sq != nullptr) {
                     current->sq->push(v); // Adiciona o valor na estrutura da posição i
                 }
             } else if (op == "DEL") {
@@ -40,7 +40,7 @@ int main() {
                 for (int idx = 0; idx < i && current != nullptr; idx++) {
                     current = current->next;
                 }
-                if (current != nullptr && current->sq->size() > 0) {
+                if (current != nullptr && current->sq != nullptr && current->sq->size() > 0) {
                     current->sq->pop(); // Remove um elemento da estrutura da posição i
                 }
             } else if (op == "SPL") {
@@ -50,13 +50,15 @@ int main() {
                 for (int idx = 0; idx < i && current != nullptr; idx++) {
                     current = current->next;
                 }
-                if (current != nullptr && current->sq->size() >= 2) {
+                if (current != nullptr && current->sq != nullptr && current->sq->size() >= 2) {
                     // Divide a estrutura da posição i em duas
                     SQ<int>* newSQ = current->sq->split();
-                    SQNode* newNode = new SQNode(newSQ, current->next);
-                    current->next = newNode;
-                    if (current == tail) {
-                        tail = newNode;
+                    if (newSQ != nullptr) {
+                        SQNode* newNode = new SQNode(newSQ, current->next);
+                        current->next = newNode;
+                        if (current == tail) {
+                            tail = newNode;
+                        }
                     }
                 }
             } else if (op == "MER") {
@@ -70,7 +72,7 @@ int main() {
                 for (int idx = 0; idx < j && nodeJ != nullptr; idx++) {
                     nodeJ = nodeJ->next;
                 }
-                if (nodeI != nullptr && nodeJ != nullptr && i != j) {
+                if (nodeI != nullptr && nodeJ != nullptr && nodeI->sq != nullptr && nodeJ->sq != nullptr && i != j) {
                     // Mescla as estruturas das posições i e j
                     nodeI->sq->merge(nodeJ->sq);
                     // Remove o nó j da lista encadeada
@@ -93,7 +95,7 @@ int main() {
                 for (int idx = 0; idx < i && current != nullptr; idx++) {
                     current = current->next;
                 }
-                if (current != nullptr) {
+                if (current != nullptr && current->sq != nullptr) {
                     // Transforma a estrutura da posição i entre pilha e fila
                     current->sq->transform();
                 }
@@ -104,7 +106,7 @@ int main() {
         cout << "caso " << caseNo << ":";
         SQNode* current = head;
         while (current != nullptr) {
-            if (current->sq->size() > 0) {
+            if (current->sq != nullptr && current->sq->size() > 0) {
                 cout << " " << current->sq->peek(); // Imprime o elemento no topo/frente
             } else {
                 cout << " ?"; // Imprime '?' se a estrutura estiver vazia
