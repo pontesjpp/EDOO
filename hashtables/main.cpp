@@ -8,24 +8,24 @@ using namespace std;
 int main (int argc, char **argv) {
     MyHash hashy;
     string name;
-    hashy.addItem("Paul", "Locha");
-    hashy.addItem("Kim", "Iced Mocha");
-    hashy.addItem("Emma", "Strawberry Smoothy");
-    hashy.addItem("Annie", "Hot Chocolate");
-    hashy.addItem("Sarah", "Passion Tea");
-    hashy.addItem("Pepper", "Caramel Mocha");
-    hashy.addItem("Mike", "Chai Tea");
-    hashy.addItem("Steve", "Apple Cider");
-    hashy.addItem("Bill", "Root Beer");
-    hashy.addItem("Marie", "Skinny Latte");
-    hashy.addItem("Susan", "Water");
-
-    while (name!="exit")
+    string drink;
+    while (name != "exit")
     {
-        cin>>name;
-        hashy.findDrink(name);
+        cout << "Enter name: ";
+        cin >> name;
+        if (name != "exit")
+        {
+            cout << "Enter drink: ";
+            cin >> drink;
+            hashy.addItem(name, drink);
+        }
     }
+    int ts = hashy.ts;
+    int count = hashy.totalItems();
+    float lf = (float) count/ts;
+    cout << "The actual table size is "<< ts << endl;
+    cout << "The count of items is "<< count << endl;
+    cout << "The actual load factor is "<< lf << endl;
     
-
     return 0;
 }
