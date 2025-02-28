@@ -212,3 +212,16 @@ void MyHash::removeName(string name)
         }
     }
 }
+
+float MyHash::getloadFactor(int ts, int count){
+    float lf = (float) count/ts;
+    return count/ts;
+}
+
+int MyHash::totalItems(){
+    int count = 0;
+    for (int i=0;i<tableSize;i++){
+        count += numberOfItemsInIndex(i);
+    }
+    return count;
+}
