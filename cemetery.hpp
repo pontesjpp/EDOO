@@ -44,8 +44,8 @@ Cemetery::Cemetery(int floors, int gravesPerFloor) {
     for (int i = 0; i < M; i++) {
         cemetery[i].resize(L);
         for (int j = 0; j < L; j++) {
-            cemetery[i][j].deleted = false;
-            cemetery[i][j].key = 100000;
+            cemetery[i][j].deleted = true;
+            cemetery[i][j].key = -1;
         }
     }
 } 
@@ -59,71 +59,55 @@ int Cemetery::hash(key_t key) {
 }
 
 location_t Cemetery::add(key_t key){
-    int floor = hash(key);
-    int count = 0;
-    while (cemetery[floor][count].key != 100000 && count < L) {
-        count++;
+  if (!cemetery[hash(key)][L-1].deleted || cemetery[hash(key)][L-1].key != -1) {
+    fullCemetery();
+  }
+  
+  int floor = hash(key);
+  location_t loc = {floor, -1};
+  grave_t grave = {false, key};
+  
+  for (int j = 0; j < L; j++) {
+    if(grave.key == key) {
+      loc.grave = j;
     }
-    if (count == L) {
-        fullCemetery();
-        floor = hash(key);
+    
+    if (cemetery[floor][j].key == -1) {
+      cemetery[floor][j] = grave;
+      break;
     }
-    count = 0;
-    while (cemetery[floor][count].key != 100000 && count < L) {
-        count++;
+    else if(cemetery[floor][j].key > grave.key) {
+      grave_t temp = cemetery[floor][j];
+      cemetery[floor][j] = grave;
+      grave = temp;
     }
-
-    cemetery[floor][count].key = key;
-    cemetery[floor][count].deleted = false;
-    sort(cemetery[floor].begin(), cemetery[floor].end(), [](grave_t a, grave_t b) {
-        return a.key < b.key;
-    });
-
-    location_t location;
-    location.floor = floor;
-    for (int i= 0; i<L; i++){
-        if (cemetery[floor][i].key == key){
-            location.grave = i;
-            break;
-        }
-    }
-
-    return location;
+  }
+  
+  return loc;
 
 }
 
-void Cemetery::fullCemetery() {
-    M = (M * 2) + 1;
-    L = L*2;
-    vector<vector<grave_t>> newCemetery(M);
+void Cemetery::fullCemetery() {  //aumenta o tamanho do cemitério
+    int newM = 2 * M + 1;
+    int newL = 2 * L;
+    vector<key_t> keys;
+    
     for (int i = 0; i < M; i++) {
-        newCemetery[i].resize(L);
-        for (int j = 0; j < L; j++) {
-            newCemetery[i][j].deleted = false;
-            newCemetery[i][j].key = 100000;
+      for (int j = 0; j < L; j++) {
+        if (!cemetery[i][j].deleted && cemetery[i][j].key != -1) {
+          keys.push_back(cemetery[i][j].key);
         }
+      }
     }
-
-    for (int l = 0; l < M / 2; l++) {
-        for (int j = 0; j < L/ 2; j++) {
-            if (cemetery[l][j].deleted || cemetery[l][j].key==100000) {
-                continue;
-            }
-            else {
-                int newHash = (cemetery[l][j].key) % M;
-                int count = 0;
-                while (newCemetery[newHash][count].key != 100000 && count < L) {
-                    count++;
-                }
-                newCemetery[newHash][count] = cemetery[l][j];
-                count = 0;
-                
-            }
-        }
+    
+    M = newM;
+    L = newL;
+    cemetery.assign(M, vector<grave_t>(L, {true, -1}));
+    
+    for (key_t key : keys) {
+      add(key);
     }
-
-    cemetery = newCemetery;
-}
+  }
 
 bool Cemetery::has(key_t key){
     int floor = hash(key);
@@ -137,7 +121,7 @@ bool Cemetery::has(key_t key){
 
 location_t Cemetery::del(key_t key) {
     bool cont = has(key);
-    location_t location {100000,100000};
+    location_t location {-1,-1};
     if (cont == false) {
         return location;
     }
@@ -158,7 +142,7 @@ location_t Cemetery::del(key_t key) {
 
 location_t Cemetery::qry(key_t key){
     bool cont = has(key);
-    location_t location {100000,100000};
+    location_t location {-1,-1};
     if (cont == false) {
         return location;
     }
