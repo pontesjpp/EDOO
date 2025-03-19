@@ -18,7 +18,7 @@ int main() {
             key_t key;
             cin >> key;
             location_t location = cemetery.del(key);
-            if (location.floor==100000 && location.grave==100000){
+            if (location.floor==-1 && location.grave==-1){
                 cout<< "?.?"<< endl;
             }
             else {
@@ -28,17 +28,13 @@ int main() {
             key_t key;
             cin >> key;
             location_t location = cemetery.qry(key);
-            if (location.floor==100000 && location.grave== 100000){
+            if (location.floor==-1 && location.grave== -1){
                 cout<< "?.?"<< endl;
             }
             else {
                 cout << location.floor << "." << location.grave << endl;
             }
         } 
-        else {
-            cerr << "Invalid command: " << command << endl;
-            return 1;
-        }
     }
     return 0;
 }
